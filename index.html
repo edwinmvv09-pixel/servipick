@@ -206,7 +206,7 @@ img{max-width:100%;border-radius:var(--radius)}
 .modal-close:hover{background:var(--c-border)}
 
 /* ══════════ CHAT ══════════ */
-.chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--nav-h));margin-top:var(--nav-h)}
+.chat-layout{display:grid;grid-template-columns:300px 1fr;height:calc(100vh - var(--nav-h));margin-top:var(--nav-h);overflow:hidden}
 .chat-sidebar{border-right:1px solid var(--c-border);background:var(--c-surface);overflow-y:auto}
 .chat-sidebar-header{padding:20px;border-bottom:1px solid var(--c-border);font-family:var(--font-display);font-size:16px;font-weight:700}
 .chat-conv-item{padding:14px 20px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;border-bottom:1px solid var(--c-border);transition:background .15s}
@@ -314,6 +314,10 @@ img{max-width:100%;border-radius:var(--radius)}
 .mobile-nav-item svg{width:22px;height:22px}
 
 /* ══════════ RESPONSIVE ══════════ */
+
+/* ── Back button (mobile only) ── */
+.chat-back-btn{display:none;width:36px;height:36px;border-radius:50%;background:var(--c-surface2);border:none;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;color:var(--c-text-soft)}
+
 @media(max-width:900px){
   .chat-layout{grid-template-columns:1fr}
   .chat-sidebar{display:none}
@@ -324,21 +328,144 @@ img{max-width:100%;border-radius:var(--radius)}
 @media(max-width:768px){
   .nav-links{display:none}
   .mobile-nav{display:block}
+
+  /* ── General page ── */
   .page{padding-bottom:80px}
-  .hero{padding:60px 24px 80px}
-  .hero-stats{gap:24px}
+  .hero{padding:48px 20px 56px}
+  .hero-stats{gap:20px;flex-wrap:wrap}
   .grid-tecnicos{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
   .profile-stat-row{grid-template-columns:repeat(2,1fr)}
   .dash-stats{grid-template-columns:repeat(2,1fr)}
-  .auth-card{padding:28px 20px}
+  .auth-card{padding:24px 18px}
   .footer-grid{grid-template-columns:1fr 1fr!important}
+
+  /* ── CHAT: full fix ── */
+  /* Layout fills viewport minus top nav and bottom mobile nav */
+  .chat-layout{
+    height:calc(100vh - var(--nav-h) - 64px);
+    margin-top:var(--nav-h);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  /* On mobile: sidebar = full width conversation list shown first */
+  .chat-sidebar{
+    display:block !important;
+    width:100%;
+    border-right:none;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    height:100%;
+  }
+  /* Main chat hidden by default on mobile until conversation selected */
+  .chat-main{
+    display:none;
+    flex-direction:column;
+    min-height:0;
+    overflow:hidden;
+  }
+  /* .chat-open class added to layout when a chat is active */
+  .chat-layout.chat-open .chat-sidebar{display:none !important}
+  .chat-layout.chat-open .chat-main{
+    display:flex;
+    flex:1;
+    flex-direction:column;
+    min-height:0;
+    overflow:hidden;
+    height:100%;
+  }
+  /* Messages area scrolls, input bar stays pinned at bottom */
+  .chat-messages{
+    flex:1;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    padding:12px 14px;
+    min-height:0;
+  }
+  /* Input bar: never hidden, never pushed off screen */
+  .chat-input-bar{
+    flex-shrink:0;
+    padding:10px 12px;
+    padding-bottom:max(10px, env(safe-area-inset-bottom, 10px));
+    background:var(--c-surface);
+    border-top:1px solid var(--c-border);
+    position:relative;
+    z-index:1;
+  }
+  .chat-header{padding:10px 14px}
+  .chat-msg{max-width:85%}
+
+  /* ── Solicitudes ── */
+  .sol-item{padding:14px}
+  .sol-actions{flex-wrap:wrap;gap:6px}
+  .sol-actions .btn{flex:1;min-width:120px;justify-content:center}
+  .sol-filter-bar{
+    display:flex;gap:6px;
+    overflow-x:auto;
+    padding-bottom:6px;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    flex-wrap:nowrap;
+    margin-bottom:16px;
+  }
+  .sol-filter-bar::-webkit-scrollbar{display:none}
+  .sol-filter-bar .cat-chip{flex-shrink:0;white-space:nowrap}
+
+  /* ── Modals: slide up from bottom on mobile ── */
+  .modal-overlay{padding:0;align-items:flex-end}
+  .modal{
+    padding:20px 16px 28px;
+    border-radius:20px 20px 0 0;
+    max-height:92vh;
+    width:100%;
+    max-width:100%;
+    margin:0;
+  }
+
+  /* ── Solicitud modal date/time: stack vertically ── */
+  .sol-datetime-grid{grid-template-columns:1fr!important}
+
+  /* ── Profile ── */
+  .profile-inner{gap:14px}
+  .profile-hero{padding:28px 16px}
+  .profile-body{padding:16px}
+  .tc-body{padding:12px 14px 14px}
+
+  /* ── Dashboard ── */
+  .dash-stat{padding:14px}
+  .dash-stat-val{font-size:22px}
+  .dash-stat-icon svg{width:18px;height:18px}
+
+  /* ── Hero ── */
+  .hero h1{font-size:clamp(24px,7vw,36px)}
+  .hero p{font-size:15px}
+
+  /* ── Chatbot panel: above mobile nav ── */
+  #sp-bot-panel{
+    bottom:80px;
+    right:10px;
+    left:10px;
+    width:auto;
+    max-height:calc(100vh - 180px);
+  }
+  #sp-bot-btn{bottom:80px;right:14px}
 }
 @media(max-width:480px){
-  .container{padding:0 16px}
+  .container{padding:0 14px}
   .grid-tecnicos{grid-template-columns:1fr}
   .auth-type-grid{grid-template-columns:1fr}
   .dash-stats{grid-template-columns:repeat(2,1fr)}
   .footer-grid{grid-template-columns:1fr!important}
+  .page-title{font-size:20px}
+  .tc-footer{flex-wrap:wrap;gap:8px}
+  .tc-footer .btn{width:100%}
+  .nav-logo{font-size:18px}
+  .hero-stats > div{flex:1;min-width:90px}
+  .hero-stat-num{font-size:20px}
+  /* Solicitudes action buttons full width on tiny screens */
+  .sol-actions .btn{min-width:0;width:100%}
+  /* Chat bubbles wider */
+  .chat-msg{max-width:90%}
 }
 </style>
 </head>
@@ -1395,7 +1522,7 @@ function renderTecnicoSolicitudes() {
   return `<div class="page">
     <div class="container" style="padding-bottom:40px;">
       <div class="page-header"><h1 class="page-title">Solicitudes Recibidas</h1><p class="page-subtitle">Gestiona las solicitudes de tus clientes</p></div>
-      <div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;">
+      <div style="display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;padding-bottom:4px;" class="sol-filter-bar">
         ${['todas','pendiente','aceptada','en proceso','completada','rechazada'].map((s,i)=>`<div class="cat-chip${i===0?' active':''}" data-sol-filter="${s}">${statusLabel(s)||'Todas'}</div>`).join('')}
       </div>
       <div id="tec-sols-list"><div class="loader"><div class="spinner"></div></div></div>
@@ -1897,7 +2024,7 @@ function showSolicitudModal(tecnicoId) {
       <div class="form-group"><label class="form-label">Descripción del trabajo</label>
         <textarea class="form-input form-textarea" id="sol-desc" placeholder="Describe qué necesitas que haga el técnico..."></textarea>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;" class="sol-datetime-grid">
         <div class="form-group"><label class="form-label">Fecha preferida</label>
           <input class="form-input" id="sol-fecha" type="date" min="${today}" value="${today}">
         </div>
@@ -1974,9 +2101,10 @@ function openChatConversation(solId, otherId, otherName) {
   // Mark active in sidebar
   document.querySelectorAll('.chat-conv-item').forEach(i => i.classList.toggle('active', i.dataset.convSol === solId));
 
-  // If on mobile, hide sidebar and show main
-  const sidebar = document.getElementById('chat-sidebar');
-  if (window.innerWidth <= 900 && sidebar) sidebar.classList.remove('show');
+  // On mobile: toggle to show chat main (hide conversation list)
+  if (window.innerWidth <= 768) {
+    chatRoot.classList.add('chat-open');
+  }
 
   renderChatMain(solId, otherId, otherName);
 }
@@ -1984,9 +2112,13 @@ function openChatConversation(solId, otherId, otherName) {
 async function renderChatMain(solId, otherId, otherName) {
   const main = document.getElementById('chat-main');
   if (!main) return;
+  const isMobile = window.innerWidth <= 768;
   main.innerHTML = `
     <div class="chat-header">
-      ${avatarHtml(null, otherName, 40)}
+      ${isMobile ? `<button onclick="showChatSidebar()" style="width:36px;height:36px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--c-text-soft);flex-shrink:0;border-radius:8px;transition:background .15s;" onmouseover="this.style.background='var(--c-surface2)'" onmouseout="this.style.background='transparent'">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>` : ''}
+      ${avatarHtml(null, otherName, 38)}
       <div class="chat-header-info">
         <div class="chat-header-name">${otherName}</div>
         <div class="chat-header-status">En línea</div>
@@ -2001,9 +2133,24 @@ async function renderChatMain(solId, otherId, otherName) {
     </div>`;
   await refreshMessages(solId);
 
+  // Auto-resize textarea
+  const inp = document.getElementById('chat-inp');
+  if (inp) {
+    inp.addEventListener('input', () => {
+      inp.style.height = 'auto';
+      inp.style.height = Math.min(inp.scrollHeight, 100) + 'px';
+    });
+  }
+
   // Setup realtime
   if (chatChannel) sb.removeChannel(chatChannel);
   chatChannel = subscribeToMensajes(solId, () => refreshMessages(solId));
+}
+
+function showChatSidebar() {
+  // Go back to conversation list on mobile
+  const chatRoot = document.getElementById('chat-root');
+  if (chatRoot) chatRoot.classList.remove('chat-open');
 }
 
 async function refreshMessages(solId) {
